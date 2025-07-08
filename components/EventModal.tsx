@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import type { CalendarEvent } from '../types';
 import { CloseIcon } from './icons/CloseIcon';
+import { TrashIcon } from './icons/TrashIcon';
 import { MONTH_NAMES, DAYS_OF_WEEK_KO } from '../constants';
 
 interface EventModalProps {
@@ -9,9 +10,10 @@ interface EventModalProps {
   selectedDate: Date;
   events: CalendarEvent[];
   addEvent: (date: Date, title: string) => void;
+  deleteEvent: (date: Date, eventId: string) => void;
 }
 
-export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDate, events, addEvent }) => {
+export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDate, events, addEvent, deleteEvent }) => {
   const [newEventTitle, setNewEventTitle] = useState('');
 
   const handleSubmit = (e: FormEvent) => {
@@ -71,9 +73,16 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selecte
             <div className="max-h-48 overflow-y-auto space-y-2 pr-2">
               {events.length > 0 ? (
                 events.map((event) => (
-                  <div key={event.id} className="flex items-center bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                  <div key={event.id} className="flex items-center bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg group">
                     <span className="w-2 h-2 bg-indigo-500 rounded-full mr-3 flex-shrink-0"></span>
                     <p className="text-gray-800 dark:text-gray-200 flex-grow">{event.title}</p>
+                    <button
+                      onClick={() => deleteEvent(selectedDate, event.id)}
+                      className="ml-2 p-1 rounded-full text-gray-400 hover:text-red-500 hover:bg-gray-200 dark:hover:bg-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                      aria-label="Delete event"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
                   </div>
                 ))
               ) : (
